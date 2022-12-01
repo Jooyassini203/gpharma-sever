@@ -1,10 +1,27 @@
-const getAll = require("../controllers/utilisateur.controller.js").getAll;
-const getSpecific =
-  require("../controllers/utilisateur.controller.js").getSpecific;
-const createOne = require("../controllers/utilisateur.controller.js").createOne;
-const changePwd = require("../controllers/utilisateur.controller.js").changePwd;
-const updateOne = require("../controllers/utilisateur.controller.js").updateOne;
-const deleteOne = require("../controllers/utilisateur.controller.js").deleteOne;
+const getAll = require(path.join(
+  __dirname,
+  "../controllers/utilisateur.controller.js"
+)).getAll;
+const getSpecific = require(path.join(
+  __dirname,
+  "../controllers/utilisateur.controller.js"
+)).getSpecific;
+const createOne = require(path.join(
+  __dirname,
+  "../controllers/utilisateur.controller.js"
+)).createOne;
+const changePwd = require(path.join(
+  __dirname,
+  "../controllers/utilisateur.controller.js"
+)).changePwd;
+const updateOne = require(path.join(
+  __dirname,
+  "../controllers/utilisateur.controller.js"
+)).updateOne;
+const deleteOne = require(path.join(
+  __dirname,
+  "../controllers/utilisateur.controller.js"
+)).deleteOne;
 const express = require("express");
 const Autentification = require("../middlewares/Authentification.middleware.js");
 const UtilisateurRouter = express.Router();
