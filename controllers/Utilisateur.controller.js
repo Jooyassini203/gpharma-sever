@@ -1,4 +1,4 @@
-const Utilisateur = require("../database/models/utilisateur.model.js");
+const Utilisateur = require("../database/models/Utilisateur.model.js");
 const fs = require("fs");
 const bcrypt = require("bcrypt");
 const bcryptData = require("../utils/utils.js").bcryptData;

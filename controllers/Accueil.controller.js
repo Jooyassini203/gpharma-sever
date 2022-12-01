@@ -1,7 +1,7 @@
 const Op = require("sequelize").Op;
 const QueryTypes = require("sequelize").QueryTypes;
 const db = require("../config/Database.js");
-const Utilisateur = require("../database/models/utilisateur.model.js");
+const Utilisateur = require("../database/models/Utilisateur.model.js");
 const Vente = require("../database/models/Vente.model.js");
 const getDateNow = require("../utils/utils.js").getDateNow;
 const getStatGeneral = async (req, res) => {
