@@ -32,10 +32,16 @@ const login = async (req, res) => {
         dataSessionCrypted,
         process.env.KEY_SESSION
       ).toString();
+      console.log("\n\n\n dataSession ", dataSession);
+      console.log(
+        "\n\n\nJSON.stringify(dataSession)",
+        JSON.stringify(dataSession)
+      );
       console.log("dataSessionCrypted", dataSessionCrypted);
-      return res
-        .status(200)
-        .send({ message: "Vous êtes connecté", dataUser: dataSessionCrypted });
+      return res.status(200).send({
+        message: "Vous êtes connecté",
+        dataUser: JSON.stringify(dataSession),
+      });
     } else
       return res
         .status(404)
@@ -65,7 +71,7 @@ const reloadDataUser = async (req, res) => {
   ).toString();
   console.log("dataSessionCrypted", dataSessionCrypted);
   // localStorage.setItem("gpharma@2.0.0", JSON.stringify(dataSession));
-  return res.status(200).send({ dataUser: dataSessionCrypted });
+  return res.status(200).send({ dataUser: JSON.stringify(dataSession) });
 };
 
 const logout = async (req, res) => {

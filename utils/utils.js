@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
 
-const MIGRATE = true; // true
+const MIGRATE = false; // true
 
 const getDateTime = (name = "") => {
   const date = new Date();

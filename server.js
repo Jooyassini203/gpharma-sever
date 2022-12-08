@@ -29,6 +29,9 @@ const path = require("path");
 const dirname = require("path").dirname;
 const fileURLToPath = require("url").fileURLToPath;
 const Marge_beneficiaireRouter = require("./routes/Marge_beneficiaire.routes.js");
+const {
+  default: NotificationRouter,
+} = require("./routes/Notification.routes.js");
 
 console.log("\n\n\tMODE ", process.env.NODE_ENV, "\n\n");
 const app = express();
@@ -68,6 +71,7 @@ app.use(VenteRouter);
 app.use(EntrepriseRouter);
 app.use(DownloadRouter);
 app.use(Marge_beneficiaireRouter);
+app.use(NotificationRouter);
 
 Migration();
 

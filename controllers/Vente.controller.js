@@ -14,6 +14,8 @@ const Guichet = require("../database/models/Guichet.model.js");
 const Caisse = require("../database/models/Caisse.model.js");
 const Societe = require("../database/models/Societe.model.js");
 const Produit_emplacement = require("../database/models/Produit_emplacement.model.js");
+const Notification = require("../database/models/Notification.model.js");
+const { getDateNow } = require("../utils/utils.js");
 const convertEngDayMonth =
   require("../utils/nizwami-ibrahim/ConvertEngDayMonth.js").convertEngDayMonth;
 const queryGet =
@@ -467,6 +469,19 @@ const validateVenteCaisse = async (req, res) => {
           item_venteDetail.unite_vente
         )})!`
       );
+
+      //ADD NOTIFICATION
+      if (item_produit_emplacement.quantite_produit <= 0.0) {
+        console.log("\n\nADD NOTIFICATION\n\n");
+        const notification = await Notification.create(
+          {
+            label: `Un produit en étalage épuisé!`,
+            details: `Produit ${item_produit_emplacement.produit.nom_produit.toUpperCase()} est en rupture de stock depuis ce ${getDateNow()}.`,
+            importance: `warning`,
+          },
+          { transaction }
+        );
+      }
 
       if (index == listVtDtls.length - 1) {
         vente.set({
