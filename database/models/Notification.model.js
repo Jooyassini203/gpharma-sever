@@ -14,9 +14,8 @@ const Notification = db.define(
     importance: {
       type: DataTypes.CHAR,
     },
-    isView: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: "0",
+    icon: {
+      type: DataTypes.CHAR,
     },
   },
   { paranoid: true, freezeTableName: true }

@@ -25,14 +25,9 @@ const VenteRouter = require("./routes/Vente.routes.js");
 const AccueilRouter = require("./routes/Accueil.routes.js");
 const EntrepriseRouter = require("./routes/Entreprise.routes.js");
 const DownloadRouter = require("./routes/Download.routes.js");
-const path = require("path");
-const dirname = require("path").dirname;
-const fileURLToPath = require("url").fileURLToPath;
+const path = require("path"); 
 const Marge_beneficiaireRouter = require("./routes/Marge_beneficiaire.routes.js");
-const {
-  default: NotificationRouter,
-} = require("./routes/Notification.routes.js");
-
+const NotificationRouter  = require("./routes/Notification.routes.js"); 
 console.log("\n\n\tMODE ", process.env.NODE_ENV, "\n\n");
 const app = express();
 app.use(expressLayouts);

@@ -1,15 +1,40 @@
 const Notification = require("../database/models/Notification.model.js");
 let cron = require("node-cron");
-const getAll = async (req, res) => {
-  cron.schedule("*/2 * * * *", () => {
-    console.log("running a task every two minutes");
-  });
-  //   try {
-  //     const response = await Notification.findAll();
-  //     res.json(response);
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
+const { getDateNow } = require("../utils/utils.js");
+const {
+  convertEngDayMonth,
+} = require("../utils/nizwami-ibrahim/ConvertEngDayMonth.js");
+const getAllNotification = async (req, res) => {
+  try {
+    const job = cron.schedule("*/5 * * * * *", async () => {
+      console.log(getDateNow()); //utilisateur_id
+      const response = await Notification.findAll({
+        // attributes: {
+        //   include: [
+        //     [
+        //       db.fn("DATE_FORMAT", db.col("createdAt"), " %W %d %M %Y "),
+        //       "createdAt",
+        //     ],
+        //   ],
+        // },
+        where: { isView: "0" },
+      });
+      if (response.length > 0) {
+        let resp = [];
+        response.map((element) => {
+          element = {
+            ...element.dataValues,
+            ["date_saisi"]: convertEngDayMonth(element.createdAt),
+          };
+          resp.push(element);
+        });
+        res.json(resp);
+        job.destroy();
+      }
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
 };
 const getSpecific = async (req, res) => {
   try {
@@ -36,4 +61,10 @@ const deleteOne = async (req, res) => {
     console.log(error);
   }
 };
-module.exports = { getAll, getSpecific, createOne, updateOne, deleteOne };
+module.exports = {
+  getAllNotification,
+  getSpecific,
+  createOne,
+  updateOne,
+  deleteOne,
+};

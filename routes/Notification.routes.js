@@ -1,4 +1,5 @@
-const getAll = require("../controllers/Notification.controller.js").getAll;
+const getAllNotification =
+  require("../controllers/Notification.controller.js").getAllNotification;
 const getSpecific =
   require("../controllers/Notification.controller.js").getSpecific;
 const createOne =
@@ -10,7 +11,11 @@ const deleteOne =
 const express = require("express");
 const Autentification = require("../middlewares/Authentification.middleware.js");
 const NotificationRouter = express.Router();
-NotificationRouter.get("/getAllNotification/", Autentification, getAll);
+NotificationRouter.get(
+  "/getAllNotification/:utilisateur_id",
+  Autentification,
+  getAllNotification
+);
 NotificationRouter.get("/Notification/:id", Autentification, getSpecific);
 NotificationRouter.post("/Notification/", Autentification, createOne);
 NotificationRouter.put("/Notification/:id", Autentification, updateOne);

@@ -26,8 +26,11 @@ const Mode_expedition = require("../models/Mode_expedition.model.js");
 const Emplacement = require("../models/Emplacement.model.js");
 const Vente = require("../models/Vente.model.js");
 const Famille = require("../models/Famille.model.js");
+const Notification = require("../models/Notification.model.js");
 const Produit = require("../models/Produit.model.js");
 const Ravitaillement = require("../models/Ravitaillement.model.js");
+const Notification_utilisateur = require("../models/Notification_utilisateur.model.js");
+const Marge_beneficiaire = require("../models/Marge_beneficiaire.model.js");
 const caisseListe = require("../seeders/Caisse.seeder.js");
 const fabricantListe = require("../seeders/Fabricant.seeder.js");
 const familleListe = require("../seeders/Famille.seeder.js");
@@ -42,7 +45,6 @@ const utilisateurData = require("../seeders/Utilisateur.seeder.js");
 const guichetListe = require("../seeders/Guichet.seeder.js");
 const entrepriveData = require("../seeders/Entreprise.seeder.js");
 const Marge_beneficiaireListe = require("../seeders/Marge_beneficiaire.seeder.js");
-const Marge_beneficiaire = require("../models/Marge_beneficiaire.model.js");
 
 // Association
 Ajustement.hasMany(Ajustement_detail, {
@@ -83,6 +85,35 @@ Utilisateur.hasMany(Ajustement, {
   },
 });
 Ajustement.belongsTo(Utilisateur, {
+  foreignKey: {
+    name: "utilisateur_id",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+});
+Notification.hasMany(Notification_utilisateur, {
+  foreignKey: {
+    name: "notification_id",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+});
+Notification_utilisateur.belongsTo(Notification, {
+  foreignKey: {
+    name: "notification_id",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+});
+
+Utilisateur.hasMany(Notification_utilisateur, {
+  foreignKey: {
+    name: "utilisateur_id",
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+});
+Notification_utilisateur.belongsTo(Utilisateur, {
   foreignKey: {
     name: "utilisateur_id",
     type: DataTypes.INTEGER,
@@ -518,7 +549,7 @@ Ravitaillement.belongsTo(Utilisateur, {
 });
 
 const Migration = async () => {
-  //  console.log(" \n\n\n\n Migration \n\n\n ");
+  console.log(" \n\n\n\n Migration \n\n\n ");
   await db
     .sync({ force: MIGRATE })
     .then(async () => {
