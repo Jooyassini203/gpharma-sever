@@ -1,6 +1,7 @@
 let arrayValue = [
   "CONSOMMABLE",
   "MEDICAMENT",
+  "INJECTION",
   "MATÉRIAUX",
   "INSTRUMENT",
   "OUTILS",

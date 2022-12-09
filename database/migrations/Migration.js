@@ -610,20 +610,20 @@ const Migration = async () => {
           .catch(() =>
             console.log(" ------> Table << Emplacement >> NON migrée!!!")
           );
-        // await Produit.bulkCreate(produitListe)
-        //   .then(() => console.log(" ------> Table << Produit >> migrée!"))
-        //   .catch(() =>
-        //     console.log(" ------> Table << Produit >> NON migrée!!!")
-        //   );
-        // await Produit_emplacement.bulkCreate(produitEmplacementListe)
-        //   .then(() =>
-        //     console.log(" ------> Table << Produit_emplacement >> migrée!")
-        //   )
-        //   .catch(() =>
-        //     console.log(
-        //       " ------> Table << Produit_emplacement >> NON migrée!!!"
-        //     )
-        //   );
+        await Produit.bulkCreate(produitListe)
+          .then(() => console.log(" ------> Table << Produit >> migrée!"))
+          .catch(() =>
+            console.log(" ------> Table << Produit >> NON migrée!!!")
+          );
+        await Produit_emplacement.bulkCreate(produitEmplacementListe)
+          .then(() =>
+            console.log(" ------> Table << Produit_emplacement >> migrée!")
+          )
+          .catch(() =>
+            console.log(
+              " ------> Table << Produit_emplacement >> NON migrée!!!"
+            )
+          );
         await Entreprise.bulkCreate(entrepriveData)
           .then(() => console.log(" ------> Table << Entreprise >> migrée!"))
           .catch(() =>

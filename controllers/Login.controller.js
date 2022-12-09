@@ -1,7 +1,46 @@
 const Utilisateur = require("../database/models/Utilisateur.model.js");
 const bcrypt = require("bcrypt");
 const cryptojs = require("crypto-js");
+const Produit = require("../database/models/Produit.model.js");
+const Notification = require("../database/models/Notification.model.js");
+const db = require("../config/Database.js");
+const { QueryTypes, Op } = require("sequelize");
+const Produit_emplacement = require("../database/models/Produit_emplacement.model.js");
 const getDateNow = require("../utils/utils.js").getDateNow;
+
+const updatePeremption = async () => {
+  const new_perimee = await db.query(
+    `SELECT * FROM produit WHERE status != "2" AND date_peremption >= DATE(NOW())`,
+    { type: QueryTypes.SELECT }
+  );
+  let listNotif = [];
+  if (new_perimee.length > 0) {
+    console.log("\nnew_perimee\n\n", new_perimee);
+    new_perimee.forEach(async (element) => {
+      console.log("\n\nADD NOTIFICATION\n\n");
+      listNotif.push({
+        label: `PEREMPTION / ${element.code_lot_produit} #${element.nom_produit} `,
+        details: `Le Produit ${element.nom_produit.toUpperCase()} est périmé depuis ce ${
+          element.date_peremption
+        }. Il est ne peut plus être étaler!`,
+        importance: `danger`,
+        icon: `dolly-flatbed`,
+      });
+    });
+    await Notification.bulkCreate(listNotif);
+    //UPDATE STATUS 2 PERIMEE
+    await db.query(
+      `UPDATE produit SET status = "2" WHERE date_peremption >= DATE(NOW())`,
+      { type: QueryTypes.UPDATE }
+    );
+    //DELETE IN PRODUIT EMPLACEMENT
+    new_perimee.forEach(async (element) => {
+      await Produit_emplacement.destroy({
+        where: { code_lot_produit: element.code_lot_produit },
+      });
+    });
+  }
+};
 
 const login = async (req, res) => {
   const nom_login = req.body.nom_login;
@@ -38,10 +77,13 @@ const login = async (req, res) => {
         JSON.stringify(dataSession)
       );
       console.log("dataSessionCrypted", dataSessionCrypted);
-      return res.status(200).send({
+      res.status(200).send({
         message: "Vous êtes connecté",
         dataUser: JSON.stringify(dataSession),
       });
+      console.log("test LOGIN");
+      //-------------------------------------------------------CHECK PRODUIT PERIMEE--------------------------------------------------------------
+      updatePeremption();
     } else
       return res
         .status(404)

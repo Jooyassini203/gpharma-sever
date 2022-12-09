@@ -11,11 +11,11 @@ const Notification_utilisateur = db.define(
       allowNull: false,
     },
     etat: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.CHAR,
       defaultValue: "NOUVELLE",
     },
   },
-  { paranoid: true, timestamps: false }
+  { paranoid: true, freezeTableName: true }
 );
 
 module.exports = Notification_utilisateur;

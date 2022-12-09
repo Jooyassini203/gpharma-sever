@@ -51,7 +51,7 @@ const Produit = db.define(
       allowNull: false,
     },
     status: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
       defaultValue: "1",
     },
   },

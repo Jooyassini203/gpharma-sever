@@ -336,6 +336,16 @@ const createOne = async (req, res) => {
           }
           console.log("\n\n message ", index_element, message, "\n\n");
           if (index_element == listVenteDetails.length - 1) {
+            console.log("\n\nADD NOTIFICATION\n\n");
+            const notification = await Notification.create(
+              {
+                label: `Commande n° ${item_vente.id} * à recevoir!`,
+                details: `Commande n° ${item_vente.id} d'un guichetier * à recevoir par un caissier.`,
+                importance: `secondary`,
+                icon: `shopping-cart`,
+              },
+              { transaction }
+            );
             await transaction.commit();
             if (req.files) {
               const dataUpdateFile = { file_societe: "" };
@@ -491,6 +501,18 @@ const validateVenteCaisse = async (req, res) => {
           etat_vente: "1",
         });
         await vente.save({ transaction });
+        console.log("\n\nADD NOTIFICATION\n\n");
+        const notification = await Notification.create(
+          {
+            label: `Vente n° ${item_vente.id} * Validée!`,
+            details: `Commande n° ${
+              item_vente.id
+            } est validé à ${getDateNow()}.`,
+            importance: `info`,
+            icon: `money-bill-alt`,
+          },
+          { transaction }
+        );
         await transaction.commit();
         return res.status(200).json({ message: message.join("\n") });
       }
