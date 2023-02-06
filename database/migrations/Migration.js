@@ -45,6 +45,10 @@ const utilisateurData = require("../seeders/Utilisateur.seeder.js");
 const guichetListe = require("../seeders/Guichet.seeder.js");
 const entrepriveData = require("../seeders/Entreprise.seeder.js");
 const Marge_beneficiaireListe = require("../seeders/Marge_beneficiaire.seeder.js");
+const {
+  notificationListe,
+  notificationUilisateurListe,
+} = require("../factories/Notification.factorie.js");
 
 // Association
 Ajustement.hasMany(Ajustement_detail, {
@@ -635,6 +639,22 @@ const Migration = async () => {
           )
           .catch(() =>
             console.log(" ------> Table << Marge_beneficiaire >> NON migrée!!!")
+          );
+        await Notification.bulkCreate(notificationListe)
+          .then(() =>
+            console.log(" ------> Table << notificationListe >> migrée!")
+          )
+          .catch(() =>
+            console.log(" ------> Table << notificationListe >> NON migrée!!!")
+          );
+        await Notification_utilisateur.bulkCreate(notificationUilisateurListe)
+          .then(() =>
+            console.log(" ------> Table << Notification_utilisateur >> migrée!")
+          )
+          .catch(() =>
+            console.log(
+              " ------> Table << Notification_utilisateur >> NON migrée!!!"
+            )
           );
       }
     })

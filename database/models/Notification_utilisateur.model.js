@@ -15,7 +15,7 @@ const Notification_utilisateur = db.define(
       defaultValue: "NOUVELLE",
     },
   },
-  { paranoid: true, freezeTableName: true }
+  { paranoid: false, freezeTableName: true, timestamps: false }
 );
 
 module.exports = Notification_utilisateur;
