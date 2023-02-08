@@ -7,7 +7,7 @@ const {
 const Notification_utilisateur = require("../database/models/Notification_utilisateur.model.js");
 const { Op, QueryTypes } = require("sequelize");
 const db = require("../config/Database.js");
-const socketIO = require("../server.js");
+const { socketIO } = require("../utils/utils.js");
 const Utilisateur = require("../database/models/Utilisateur.model.js");
 const getAllNewNotification = async (req, res) => {
   try {
@@ -63,7 +63,7 @@ const getNotification = async () => {
   try {
     const response = await db.query(
       `
-      SELECT A.id, A.label, A.details, A.importance, A.icon, B.etat, DATE_FORMAT(createdAt, ' %W %d %M %Y ') AS createdAt FROM notification A INNER JOIN notification_utilisateur B ON (A.id = B.notification_id  AND B.etat != "SUPPRIME" ) WHERE A.deletedAt IS NULL ORDER BY createdAt DESC; 
+      SELECT A.id, A.label, A.details, A.importance, A.icon, B.etat, B.utilisateur_id, DATE_FORMAT(createdAt, ' %W %d %M %Y ') AS createdAt FROM notification A INNER JOIN notification_utilisateur B ON (A.id = B.notification_id  AND B.etat != "SUPPRIME" ) WHERE A.deletedAt IS NULL GROUP BY A.id ORDER BY A.id DESC; 
       `,
       { type: QueryTypes.SELECT }
     );
@@ -76,8 +76,10 @@ const getNotification = async () => {
         };
         resp.push(element);
       });
+
+      socketIO.emit("newNotification", { data: resp });
+      return resp;
     }
-    return resp;
   } catch (error) {
     console.log(error.message);
   }
@@ -94,7 +96,7 @@ const getSpecific = async (req, res) => {
 };
 
 const createNewNotification = async (
-  { label, details, importance, icon, utilisateur_id },
+  { label, details, importance, icon, type_utilisateur = "" },
   transaction = null
 ) => {
   const _notification = await Notification.create(
@@ -103,15 +105,6 @@ const createNewNotification = async (
       details,
       importance,
       icon,
-      type_utilisateur,
-    },
-    { transaction }
-  );
-  await Notification_utilisateur.create(
-    {
-      etat: "NOUVELLE",
-      utilisateur_id,
-      notification_id: _notification.id,
     },
     { transaction }
   );
@@ -130,7 +123,7 @@ const createNewNotification = async (
       });
     });
   const response = await db.query(
-    `  SELECT A.id, A.label, A.details, A.importance, A.icon, B.etat, DATE_FORMAT(createdAt, ' %W %d %M %Y ') AS createdAt FROM notification A INNER JOIN notification_utilisateur B ON (A.id = B.notification_id  AND B.etat != "SUPPRIME" ) WHERE A.deletedAt IS NULL ORDER BY createdAt DESC; `,
+    `  SELECT A.id, A.label, A.details, A.importance, A.icon, B.etat, DATE_FORMAT(createdAt, ' %W %d %M %Y ') AS createdAt FROM notification A INNER JOIN notification_utilisateur B ON (A.id = B.notification_id  AND B.etat != "SUPPRIME" ) WHERE A.deletedAt IS NULL GROUP BY A.id ORDER BY A.id DESC; `,
     { type: QueryTypes.SELECT }
   );
   if (response.length > 0) {

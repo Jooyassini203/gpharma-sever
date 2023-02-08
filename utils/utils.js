@@ -1,6 +1,15 @@
 const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
+const express = require("express");
+//Déclaration app, http, socketIO
+const app = express();
+const http = require("http").Server(app);
+const socketIO = require("socket.io")(http, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
 
 const MIGRATE = false;
 
@@ -148,4 +157,7 @@ module.exports = {
   formatZero,
   getId,
   getEmplacement,
+  app,
+  http,
+  socketIO,
 };

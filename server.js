@@ -29,15 +29,16 @@ const path = require("path");
 const Marge_beneficiaireRouter = require("./routes/Marge_beneficiaire.routes.js");
 const NotificationRouter = require("./routes/Notification.routes.js");
 const { getNotification } = require("./controllers/Notification.controller.js");
+
 console.log("\n\n\tMODE ", process.env.NODE_ENV, "\n\n");
-const app = express();
+
+const { app, http, socketIO } = require("./utils/utils.js");
+
 app.use(expressLayouts);
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(FileUpload());
-const http = require("http").Server(app);
-
 app.set("view engine", "handlebars");
 // app.engine("handlebars", handlebars.engines);
 hbs.registerHelper("ifNull", function (v) {
@@ -46,24 +47,14 @@ hbs.registerHelper("ifNull", function (v) {
   }
 });
 
-//New imports
-const socketIO = require("socket.io")(http, {
-  cors: {
-    origin: "http://localhost:3000",
-  },
-});
-
 socketIO.on("connection", (socket) => {
   console.log(`⚡: ${socket.id} user just connected!`);
   socket.on("getNotification", async (data) => {
-    console.log(data);
-    socketIO.emit("newNotification", await getNotification());
+    getNotification();
   });
 
   socket.on("disconnect", () => {
     console.log("🔥: A user disconnected");
-    users = users.filter((user) => user.socketID !== socket.id);
-    socketIO.emit("newUserResponse", users);
     socket.disconnect();
   });
 });
@@ -95,8 +86,6 @@ app.use(NotificationRouter);
 
 Migration();
 
-app.listen(process.env.PORT, () => {
+http.listen(process.env.PORT, () => {
   console.log(`SERVEUR LANCE SUR LE PORT ${process.env.PORT} ...`);
 });
-
-module.exports = socketIO;
