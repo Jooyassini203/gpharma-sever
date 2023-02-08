@@ -8,6 +8,7 @@ const Ravitaillement = require("../database/models/Ravitaillement.model.js");
 const Ravitaillement_detail = require("../database/models/Ravitaillement_detail.model.js");
 const Unite = require("../database/models/Unite.model.js");
 const Utilisateur = require("../database/models/Utilisateur.model.js");
+const { createNewNotification } = require("./Notification.controller.js");
 const convertEngDayMonth =
   require("../utils/nizwami-ibrahim/ConvertEngDayMonth.js").convertEngDayMonth;
 const getDateNow = require("../utils/utils.js").getDateNow;
@@ -124,6 +125,12 @@ const createOne = async (req, res) => {
       console.log("\n\n\n\n\n", dataRvtDetail, "\n\n\n\n\n");
 
       await Ravitaillement_detail.bulkCreate(dataRvtDetail);
+      createNewNotification({
+        label: `Ravitaillement n° ${newRvt.id} * ajouté (Non valider)!`,
+        details: `Ravitaillement n° ${newRvt.id} motif << ${newRvt.motif} >> ajouté avec [${dataRvtDetail.length}] produit(s) commandé(s).`,
+        importance: `secondary`,
+        icon: `shipping-fast`,
+      });
       return res
         .status(200)
         .json({ message: "Tous les produits sont commandés!" });
@@ -232,6 +239,12 @@ const validateRavitaillement = async (req, res) => {
       date_livraison: req.body.date_livraison,
     });
     await rvt.save();
+    createNewNotification({
+      label: `Ravitaillement n° ${newRvt.id} * livré!`,
+      details: `Ravitaillement n° ${newRvt.id} motif << ${newRvt.motif} >> livré avec [${dataRvtDetail.length}] produit(s) livré(s).`,
+      importance: `secondary`,
+      icon: `shipping-fast`,
+    });
     console.log("\n\n\n\n\n", rvt, "\n\n\n\n\n");
 
     return res.status(200).json({
@@ -248,6 +261,12 @@ const deleteOne = async (req, res) => {
     return res.status(404).json({ message: "Ravitaillement introvable!" });
   try {
     await Ravitaillement.destroy({ where: { id: req.params.id } });
+    createNewNotification({
+      label: `Ravitaillement n° ${newRvt.id} * supprimé!`,
+      details: `Ravitaillement n° ${newRvt.id} de motif << ${newRvt.motif} >> supprimé.`,
+      importance: `secondary`,
+      icon: `shipping-fast`,
+    });
     return res
       .status(200)
       .json({ message: "Ravitaillement supprimé avec succès!" });

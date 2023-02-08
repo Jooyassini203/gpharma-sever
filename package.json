@@ -32,7 +32,8 @@
     "pdf-creator-node": "^2.3.5",
     "react-confirm-alert": "^3.0.6",
     "sequelize": "^6.23.1",
-    "sessionstorage-for-nodejs": "^1.0.2"
+    "sessionstorage-for-nodejs": "^1.0.2",
+    "socket.io": "^4.5.4"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.5.0"

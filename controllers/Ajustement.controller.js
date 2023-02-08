@@ -6,6 +6,7 @@ const Produit = require("../database/models/Produit.model.js");
 const Produit_emplacement = require("../database/models/Produit_emplacement.model.js");
 const Unite = require("../database/models/Unite.model.js");
 const Utilisateur = require("../database/models/Utilisateur.model.js");
+const { createNewNotification } = require("./Notification.controller.js");
 const convertEngDayMonth =
   require("../utils/nizwami-ibrahim/ConvertEngDayMonth.js").convertEngDayMonth;
 const getAll = async (req, res) => {
@@ -167,6 +168,15 @@ const createOne = async (req, res) => {
           message,
           message.length,
           dataAjtDetail.length
+        );
+        createNewNotification(
+          {
+            label: `Ajustement n° ${item_ajt.id} est effectuée!`,
+            details: message,
+            importance: `success`,
+            icon: `balance-scale`,
+          },
+          transaction
         );
         await transaction.commit();
         if (message.length == dataAjtDetail.length) {

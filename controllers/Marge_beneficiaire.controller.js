@@ -1,5 +1,6 @@
 const Op = require("sequelize").Op;
 const Marge_beneficiaire = require("../database/models/Marge_beneficiaire.model.js");
+const { createNewNotification } = require("./Notification.controller.js");
 const getAll = async (req, res) => {
   try {
     const response = await Marge_beneficiaire.findAll({
@@ -109,6 +110,15 @@ const updateActive = async (req, res) => {
         },
       }
     );
+    createNewNotification({
+      label: `Marge bénéficiaire changée!`,
+      details:
+        "Marge bénéficiaire **" +
+        item.marge_beneficiaire +
+        "** choisis par défaut",
+      importance: `info`,
+      icon: `line-chart`,
+    });
     return res.status(200).json({
       message:
         "Marge bénéficiaire **" +

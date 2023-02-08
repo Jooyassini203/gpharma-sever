@@ -16,6 +16,7 @@ const Societe = require("../database/models/Societe.model.js");
 const Produit_emplacement = require("../database/models/Produit_emplacement.model.js");
 const Notification = require("../database/models/Notification.model.js");
 const { getDateNow } = require("../utils/utils.js");
+const { createNewNotification } = require("./Notification.controller.js");
 const convertEngDayMonth =
   require("../utils/nizwami-ibrahim/ConvertEngDayMonth.js").convertEngDayMonth;
 const queryGet =
@@ -337,14 +338,14 @@ const createOne = async (req, res) => {
           console.log("\n\n message ", index_element, message, "\n\n");
           if (index_element == listVenteDetails.length - 1) {
             console.log("\n\nADD NOTIFICATION\n\n");
-            const notification = await Notification.create(
+            createNewNotification(
               {
                 label: `Commande n° ${item_vente.id} * à recevoir!`,
                 details: `Commande n° ${item_vente.id} d'un guichetier * à recevoir par un caissier.`,
                 importance: `secondary`,
                 icon: `shopping-cart`,
               },
-              { transaction }
+              transaction
             );
             await transaction.commit();
             if (req.files) {
@@ -403,6 +404,7 @@ const validateVenteCaisse = async (req, res) => {
   };
   // ________________________________________________
   try {
+    const item_vente = await Vente.findOne({ where: { id: vente_id } });
     const listVtDtls = await Vente_detail.findAll({ where: { vente_id } });
     if (!listVtDtls) {
       return res
@@ -483,13 +485,14 @@ const validateVenteCaisse = async (req, res) => {
       //ADD NOTIFICATION
       if (item_produit_emplacement.quantite_produit <= 0.0) {
         console.log("\n\nADD NOTIFICATION\n\n");
-        const notification = await Notification.create(
+        createNewNotification(
           {
             label: `Un produit en étalage épuisé!`,
             details: `Produit ${item_produit_emplacement.produit.nom_produit.toUpperCase()} est en rupture de stock depuis ce ${getDateNow()}.`,
             importance: `warning`,
+            icon: `triangle-exclamation`,
           },
-          { transaction }
+          transaction
         );
       }
 
@@ -502,7 +505,7 @@ const validateVenteCaisse = async (req, res) => {
         });
         await vente.save({ transaction });
         console.log("\n\nADD NOTIFICATION\n\n");
-        const notification = await Notification.create(
+        createNewNotification(
           {
             label: `Vente n° ${item_vente.id} * Validée!`,
             details: `Commande n° ${
@@ -511,7 +514,7 @@ const validateVenteCaisse = async (req, res) => {
             importance: `info`,
             icon: `money-bill-alt`,
           },
-          { transaction }
+          transaction
         );
         await transaction.commit();
         return res.status(200).json({ message: message.join("\n") });

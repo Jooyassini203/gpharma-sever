@@ -1,4 +1,5 @@
 const Societe = require("../database/models/Societe.model.js");
+const { createNewNotification } = require("./Notification.controller.js");
 const getAll = async (req, res) => {
   try {
     const response = await Societe.findAll();
@@ -25,8 +26,14 @@ const getSpecific = async (req, res) => {
 };
 const createOne = async (req, res) => {
   try {
-    await Societe.create(req.body.data);
+    const item = await Societe.create(req.body.data);
     res.status(201).send({ message: "Société ajouté avec succès!" });
+    createNewNotification({
+      label: `Nouvelle Société ajoutée!`,
+      details: `La société << ${item.nom_societe} >> est ajoutée comme associée du pharmacie.`,
+      importance: `secondary`,
+      icon: `hospital-alt`,
+    });
   } catch (error) {
     res.status(422).send({ message: error.message });
     console.log(error.message);

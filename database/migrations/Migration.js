@@ -49,7 +49,8 @@ const {
   notificationListe,
   notificationUilisateurListe,
 } = require("../factories/Notification.factorie.js");
-
+const { createProduitHook } = require("./Triggers.js");
+createProduitHook();
 // Association
 Ajustement.hasMany(Ajustement_detail, {
   foreignKey: {

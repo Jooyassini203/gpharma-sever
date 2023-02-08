@@ -7,6 +7,8 @@ const {
 const Notification_utilisateur = require("../database/models/Notification_utilisateur.model.js");
 const { Op, QueryTypes } = require("sequelize");
 const db = require("../config/Database.js");
+const socketIO = require("../server.js");
+const Utilisateur = require("../database/models/Utilisateur.model.js");
 const getAllNewNotification = async (req, res) => {
   try {
     const job = cron.schedule("*/50 * * * * *", async () => {
@@ -36,27 +38,46 @@ const getAllNewNotification = async (req, res) => {
 };
 const getAllNotification = async (req, res) => {
   try {
-    const job = cron.schedule("*/10 * * * * *", async () => {
-      console.log(getDateNow()); //utilisateur_id
-      const response = await db.query(
-        `
+    const response = await db.query(
+      `
       SELECT A.id, A.label, A.details, A.importance, A.icon, B.etat, DATE_FORMAT(createdAt, ' %W %d %M %Y ') AS createdAt FROM notification A INNER JOIN notification_utilisateur B ON (A.id = B.notification_id  AND B.etat != "SUPPRIME" ) WHERE A.deletedAt IS NULL ORDER BY createdAt DESC; 
       `,
-        { type: QueryTypes.SELECT }
-      );
-      if (response.length > 0) {
-        let resp = [];
-        response.map((element) => {
-          element = {
-            ...element,
-            ["createdAt"]: convertEngDayMonth(element.createdAt),
-          };
-          resp.push(element);
-        });
-        res.json(resp);
-        job.destroy();
-      }
-    });
+      { type: QueryTypes.SELECT }
+    );
+    if (response.length > 0) {
+      let resp = [];
+      response.map((element) => {
+        element = {
+          ...element,
+          ["createdAt"]: convertEngDayMonth(element.createdAt),
+        };
+        resp.push(element);
+      });
+      res.json(resp);
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+const getNotification = async () => {
+  try {
+    const response = await db.query(
+      `
+      SELECT A.id, A.label, A.details, A.importance, A.icon, B.etat, DATE_FORMAT(createdAt, ' %W %d %M %Y ') AS createdAt FROM notification A INNER JOIN notification_utilisateur B ON (A.id = B.notification_id  AND B.etat != "SUPPRIME" ) WHERE A.deletedAt IS NULL ORDER BY createdAt DESC; 
+      `,
+      { type: QueryTypes.SELECT }
+    );
+    if (response.length > 0) {
+      let resp = [];
+      response.map((element) => {
+        element = {
+          ...element,
+          ["createdAt"]: convertEngDayMonth(element.createdAt),
+        };
+        resp.push(element);
+      });
+    }
+    return resp;
   } catch (error) {
     console.log(error.message);
   }
@@ -71,7 +92,60 @@ const getSpecific = async (req, res) => {
     console.log(error.message);
   }
 };
-const createOne = (req, res) => {};
+
+const createNewNotification = async (
+  { label, details, importance, icon, utilisateur_id },
+  transaction = null
+) => {
+  const _notification = await Notification.create(
+    {
+      label,
+      details,
+      importance,
+      icon,
+      type_utilisateur,
+    },
+    { transaction }
+  );
+  await Notification_utilisateur.create(
+    {
+      etat: "NOUVELLE",
+      utilisateur_id,
+      notification_id: _notification.id,
+    },
+    { transaction }
+  );
+  const where = {};
+  if (type_utilisateur) {
+    where = { type_utilisateur };
+  }
+  const listAllUsers = await Utilisateur.findAll({ where });
+  if (listAllUsers.length > 0)
+    listAllUsers.forEach(async (user) => {
+      const utilisateur_id = user.id;
+      await Notification_utilisateur.create({
+        etat: "NOUVELLE",
+        utilisateur_id,
+        notification_id: _notification.id,
+      });
+    });
+  const response = await db.query(
+    `  SELECT A.id, A.label, A.details, A.importance, A.icon, B.etat, DATE_FORMAT(createdAt, ' %W %d %M %Y ') AS createdAt FROM notification A INNER JOIN notification_utilisateur B ON (A.id = B.notification_id  AND B.etat != "SUPPRIME" ) WHERE A.deletedAt IS NULL ORDER BY createdAt DESC; `,
+    { type: QueryTypes.SELECT }
+  );
+  if (response.length > 0) {
+    let notifications = [];
+    response.map((element) => {
+      element = {
+        ...element,
+        ["createdAt"]: convertEngDayMonth(element.createdAt),
+      };
+      notifications.push(element);
+    });
+    socketIO.emit("newNotification", notifications);
+  }
+};
+
 const updateOne = async (req, res) => {};
 const deleteOne = async (req, res) => {
   const item = await Notification.findOne({ where: { id: req.params.id } });
@@ -93,9 +167,10 @@ const deleteOne = async (req, res) => {
 };
 module.exports = {
   getAllNotification,
+  getNotification,
   getAllNewNotification,
   getSpecific,
-  createOne,
+  createNewNotification,
   updateOne,
   deleteOne,
 };

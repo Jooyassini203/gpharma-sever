@@ -83,7 +83,7 @@ const login = async (req, res) => {
       });
       console.log("test LOGIN");
       //-------------------------------------------------------CHECK PRODUIT PERIMEE--------------------------------------------------------------
-      updatePeremption();
+      // updatePeremption();
     } else
       return res
         .status(404)
