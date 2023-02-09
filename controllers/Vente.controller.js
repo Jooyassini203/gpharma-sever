@@ -344,8 +344,8 @@ const createOne = async (req, res) => {
                 details: `Commande n° ${item_vente.id} d'un guichetier * à recevoir par un caissier.`,
                 importance: `secondary`,
                 icon: `shopping-cart`,
-              },
-              transaction
+              }
+              // transaction
             );
             await transaction.commit();
             if (req.files) {
@@ -491,8 +491,8 @@ const validateVenteCaisse = async (req, res) => {
             details: `Produit ${item_produit_emplacement.produit.nom_produit.toUpperCase()} est en rupture de stock depuis ce ${getDateNow()}.`,
             importance: `warning`,
             icon: `triangle-exclamation`,
-          },
-          transaction
+          }
+          // transaction
         );
       }
 
@@ -511,10 +511,10 @@ const validateVenteCaisse = async (req, res) => {
             details: `Commande n° ${
               item_vente.id
             } est validé à ${getDateNow()}.`,
-            importance: `info`,
+            importance: `success`,
             icon: `money-bill-alt`,
-          },
-          transaction
+          }
+          // transaction
         );
         await transaction.commit();
         return res.status(200).json({ message: message.join("\n") });

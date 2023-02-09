@@ -175,8 +175,8 @@ const createOne = async (req, res) => {
             details: message,
             importance: `success`,
             icon: `balance-scale`,
-          },
-          transaction
+          }
+          // transaction
         );
         await transaction.commit();
         if (message.length == dataAjtDetail.length) {
