@@ -5,7 +5,7 @@ const {
   convertEngDayMonth,
 } = require("../utils/nizwami-ibrahim/ConvertEngDayMonth.js");
 const Notification_utilisateur = require("../database/models/Notification_utilisateur.model.js");
-const { Op, QueryTypes } = require("sequelize");
+const { Op, QueryTypes, col } = require("sequelize");
 const db = require("../config/Database.js");
 const { socketIO } = require("../utils/utils.js");
 const Utilisateur = require("../database/models/Utilisateur.model.js");
@@ -37,7 +37,7 @@ const getAllNewNotification = async (req, res) => {
   }
 };
 const query = `
-SELECT A.id, B.id AS notification_utilisateur_id, A.label, A.details, A.importance, A.icon, B.etat, B.utilisateur_id, DATE_FORMAT(createdAt, ' %W %d %M %Y ') AS createdAt FROM notification A INNER JOIN notification_utilisateur B ON (A.id = B.notification_id  AND B.etat != "SUPPRIME" ) WHERE A.deletedAt IS NULL GROUP BY A.id ORDER BY A.id DESC; 
+SELECT A.id, B.id AS notification_utilisateur_id, A.label, A.details, A.importance, A.icon, B.etat, B.utilisateur_id, DATE_FORMAT(createdAt, ' %W %d %M %Y ') AS createdAt FROM notification A INNER JOIN notification_utilisateur B ON (A.id = B.notification_id  AND B.etat != "SUPPRIME" ) WHERE A.deletedAt IS NULL ORDER BY A.id DESC; 
 `;
 const getAllNotification = async (req, res) => {
   try {
@@ -156,6 +156,7 @@ const updateOne = async (req, res) => {
   }
 };
 const deleteOne = async (req, res) => {
+  console.log("\n\n\n\nfirst", req.params.id);
   const _item = await Notification_utilisateur.findOne({
     where: { id: req.params.id },
   });

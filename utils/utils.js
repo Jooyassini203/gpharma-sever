@@ -15,15 +15,21 @@ const MIGRATE = false;
 
 const getDateTime = (name = "") => {
   const date = new Date();
-  name += `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}_${date.getMilliseconds()}`;
+  name += `${date.getFullYear()}-${
+    date.getMonth() + 1
+  }-${date.getDate()}_${date.getHours()}.${date.getMinutes()}.${date.getSeconds()}_${date.getMilliseconds()}`;
   return name;
 };
 
 const getDateNow = (option = "datetime") => {
   const date = new Date(); //2022-10-22 17:41:30
-  let dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  let dateString = `${date.getFullYear()}-${
+    date.getMonth() + 1
+  }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
   if (option === "date") {
-    dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    dateString = `${date.getFullYear()}-${
+      date.getMonth() + 1
+    }-${date.getDate()}`;
   } else if (option === "time") {
     dateString = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
   }

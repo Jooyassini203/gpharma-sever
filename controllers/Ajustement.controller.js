@@ -114,7 +114,7 @@ const createOne = async (req, res) => {
           message:
             "Produit " + item_ajtDt.produit_code_lot_produit + " introvable!",
         });
-      console.log("\n\n\n\n\n", item_ajtDt, "\n\n\n\n");
+      // console.log("\n\n\n\n\n", item_ajtDt, "\n\n\n\n");
       await Ajustement_detail.create(
         {
           ...item_ajtDt,
@@ -129,7 +129,7 @@ const createOne = async (req, res) => {
         unite_stock: item_ajtDt.unite_nouveau_stock,
         unite_presentation: item_ajtDt.unite_nouveau_presentation,
       });
-      console.log("\n\n\n\n\n", item_produit, "\n\n\n\n");
+      // console.log("\n\n\n\n\n", item_produit, "\n\n\n\n");
       await item_produit.save({ transaction });
       message.push(
         `Le produit **${item_produit.nom_produit}** est ajusté de [ Stock : ${
@@ -161,7 +161,7 @@ const createOne = async (req, res) => {
         },
         { transaction }
       );
-      console.log("index == dataAjtDetail.length", index, dataAjtDetail.length);
+      // console.log("index == dataAjtDetail.length", index, dataAjtDetail.length);
       if (index == dataAjtDetail.length - 1) {
         console.log(
           "message.length == dataAjtDetail.length",
@@ -169,17 +169,14 @@ const createOne = async (req, res) => {
           message.length,
           dataAjtDetail.length
         );
-        createNewNotification(
-          {
-            label: `Ajustement n° ${item_ajt.id} est effectuée!`,
-            details: message,
-            importance: `success`,
-            icon: `balance-scale`,
-          }
-          // transaction
-        );
         await transaction.commit();
         if (message.length == dataAjtDetail.length) {
+          createNewNotification({
+            label: `Ajustement n° ${item_ajt.id} est effectuée!`,
+            details: message.join("\n"),
+            importance: `success`,
+            icon: `balance-scale`,
+          });
           return res.status(200).send({ message: message.join("\n") });
         }
       }

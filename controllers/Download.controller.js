@@ -58,7 +58,7 @@ const gerneratePdf = async (req, res) => {
               pharmacie.dataValues &&
               _vente.dataValues
             ) {
-             /*  const document = {
+              const document = {
                 html,
                 data: {
                   pharmacie: pharmacie.dataValues,
@@ -124,7 +124,7 @@ const gerneratePdf = async (req, res) => {
                 })
                 .catch((error) => {
                   console.log(error);
-                }); */
+                });
             }
           });
         })

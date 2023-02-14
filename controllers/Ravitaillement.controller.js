@@ -240,8 +240,8 @@ const validateRavitaillement = async (req, res) => {
     });
     await rvt.save();
     createNewNotification({
-      label: `Ravitaillement n° ${newRvt.id} * livré!`,
-      details: `Ravitaillement n° ${newRvt.id} motif << ${newRvt.motif} >> livré avec [${dataRvtDetail.length}] produit(s) livré(s).`,
+      label: `Ravitaillement n° ${rvt.id} * livré!`,
+      details: `Ravitaillement n° ${rvt.id} motif << ${rvt.motif} >> livré avec [${dataRvtDetail.length}] produit(s) livré(s).`,
       importance: `secondary`,
       icon: `shipping-fast`,
     });
