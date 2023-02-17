@@ -106,6 +106,7 @@ const getGuichetNonLivrer = async (req, res) => {
           ],
         ],
       },
+      include: { model: Utilisateur },
       where: { etat_vente: "0" },
     });
     let resp = [];
